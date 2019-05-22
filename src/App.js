@@ -1,26 +1,60 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import './App.css';
+import AuthPage from './pages/AuthPage';
+import EventsPage from './pages/EventsPage';
+import BookingsPage from './pages/BookingsPage';
+import MainNavigation from './components/MainNavigation/MainNavigation';
+import AuthContext from './context/AuthContext';
+
+class App extends Component {
+	state = {
+		token: null,
+		userId: null
+	}
+	login = (token, userId, tokenExpiration) => {
+		this.setState({
+			token: token,
+			userId: userId
+		});
+	}
+
+	logout = () => {
+		this.setState({
+			token: null,
+			userId: null
+		});
+	}
+	render() {
+		return (
+			<BrowserRouter>
+				<React.Fragment>
+					<AuthContext.Provider value={{ 
+						token: this.state.token,
+						userId: this.state.userId,
+						login: this.login,
+						logout: this.logout }}>
+						<MainNavigation />
+						<main className="main container mx-auto flex flex-col justify-center pt-6">
+							<Switch>
+								{this.state.token && (<Redirect from="/" to="/events" exact />)}
+								{this.state.token && (<Redirect from="/auth" to="/events" exact />)}
+								{!this.state.token && (
+									<Route path="/auth" component={AuthPage} />
+									)}
+								<Route path="/events" component={EventsPage} />
+								{this.state.token && (
+									<Route path="/bookings" component={BookingsPage} />
+									)}
+								{!this.state.token &&(<Redirect to="/auth" exact />)}
+							</Switch>
+						</main>
+					</AuthContext.Provider>
+				</React.Fragment>
+			</BrowserRouter>
+		);
+	}
 }
 
 export default App;
