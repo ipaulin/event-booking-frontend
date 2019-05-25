@@ -4,10 +4,7 @@
 
 @tailwind utilities;
 
-.modal-container {
-	top: 10rem;
-	right: calc((100% - 50%) / 2);
-}
+
 
 .events-grid {
 	grid-column-gap: 15px;

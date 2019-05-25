@@ -6,9 +6,9 @@ const MainNavigation = props => (
 	<AuthContext.Consumer>
 		{
 			(context) => {
-				return (<header className="flex items-center h-16 bg-orange-300  px-6">
+				return (<header className="flex justify-between items-center h-16 bg-orange-300  px-6">
 				<div className="mr-4">
-					<h2>Events platform</h2>
+					<h2 className="text-2xl">Events platform</h2>
 				</div>
 				<nav>
 					<ul className="list-none flex">
