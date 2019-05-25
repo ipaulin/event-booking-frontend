@@ -1,0 +1,15 @@
+.modal-container {
+	width: 100%;
+	height: 100vh;
+	top: 0;
+}
+
+@media (min-width: 640px) {
+	.modal-container {
+		width: 50%;
+		height: auto;
+		max-height: 80vh;
+		top: 10%;
+		right: calc((100% - 50%) / 2);
+	}
+}
