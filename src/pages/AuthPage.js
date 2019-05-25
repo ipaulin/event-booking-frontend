@@ -15,6 +15,7 @@ export default class AuthPage extends Component {
 		this.passwordEl = React.createRef();
 	}
 
+	// switch auth form to signup/login 
 	handleSwitch = () => {
 		this.setState((prevState => {
 			return { isLogin: !prevState.isLogin };
@@ -33,25 +34,34 @@ export default class AuthPage extends Component {
 
 		let reqBody = {
 			query: `
-				query { login(email: "${email}", password: "${pass}") {
+				query Login($email: String!, $pass: String!) { login(email: $email, password: $pass) {
 					userId
 					token
 					tokenExpiration
 				}
 			}
-			`
+			`,
+			variables: {
+				email: email,
+				pass: pass
+			}
 		}
 
+		// if not is login mode, create new user
 		if (!this.state.isLogin) {
 			reqBody = {
 				query: `
-				mutation { 
-					createUser(inputUser: {email: "${email}", password:"${pass}"}) {
+				mutation CreateUser($email: String!, $pass: String!) { 
+					createUser(inputUser: {email: $email, password: $pass}) {
 						email
 						_id
 					} 
 				}
-				`
+				`,
+				variables: {
+					email: email,
+					pass: pass
+				}
 			}
 		}
 
@@ -72,16 +82,15 @@ export default class AuthPage extends Component {
 			if (resData.data.login.token) {
 				this.context.login(resData.data.login.token, resData.data.login.userId, resData.data.login.tokenExpiration)
 			}
-			console.log(resData);
 		})
 		.catch((err) => {
-			console.log(err);
+			throw err;
 		});
 	}
 
 	render() {
 		return(
-			<div className="w-full max-w-xs">
+			<div className="w-full max-w-xs m-auto">
 				<form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={this.handleSubmit}>
 					<div className="mb-4">
 						<label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
@@ -96,7 +105,6 @@ export default class AuthPage extends Component {
 						</label>
 						<input className="shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" 
 						id="password" type="password" placeholder="******************" ref={this.passwordEl} />
-						<p className="text-red-500 text-xs italic">Please choose a password.</p>
 					</div>
 					<div className="flex items-center justify-between">
 						<button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
