@@ -11,43 +11,54 @@ import AuthContext from './context/AuthContext';
 class App extends Component {
 	state = {
 		token: null,
-		userId: null
+		userId: null,
 	}
-	login = (token, userId, tokenExpiration) => {
-		this.setState({
+	componentDidMount() {
+		const authDetails = JSON.parse( localStorage.getItem( 'evbr_auth' ) );
+		if ( authDetails ) {
+			this.setState( {
+				token: authDetails.token,
+				userId: authDetails.userId,
+			} );
+		}
+	}
+
+	login = ( token, userId, tokenExpiration ) => {
+		this.setState( {
 			token: token,
-			userId: userId
+			userId: userId,
 		});
 	}
 
 	logout = () => {
-		this.setState({
+		this.setState( {
 			token: null,
-			userId: null
-		});
+			userId: null,
+		} );
 	}
 	render() {
 		return (
 			<BrowserRouter>
 				<React.Fragment>
-					<AuthContext.Provider value={{ 
+					<AuthContext.Provider value={ {
 						token: this.state.token,
 						userId: this.state.userId,
 						login: this.login,
-						logout: this.logout }}>
+						logout: this.logout,
+					} }>
 						<MainNavigation />
 						<main className="main container mx-auto flex flex-col justify-center pt-6">
 							<Switch>
-								{this.state.token && (<Redirect from="/" to="/events" exact />)}
-								{this.state.token && (<Redirect from="/auth" to="/events" exact />)}
-								{!this.state.token && (
-									<Route path="/auth" component={AuthPage} />
-									)}
-								<Route path="/events" component={EventsPage} />
-								{this.state.token && (
-									<Route path="/bookings" component={BookingsPage} />
-									)}
-								{!this.state.token &&(<Redirect to="/auth" exact />)}
+								{ this.state.token && ( <Redirect from="/" to="/events" exact /> ) }
+								{ this.state.token && ( <Redirect from="/auth" to="/events" exact /> ) }
+								{ ! this.state.token && (
+									<Route path="/auth" component= { AuthPage } />
+								) }
+								<Route path="/events" component={ EventsPage } />
+								{ this.state.token && (
+									<Route path="/bookings" component={ BookingsPage } />
+								) }
+								{ ! this.state.token &&( <Redirect to="/auth" exact /> ) }
 							</Switch>
 						</main>
 					</AuthContext.Provider>
