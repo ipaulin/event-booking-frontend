@@ -31,6 +31,7 @@ class App extends Component {
 	}
 
 	logout = () => {
+		localStorage.removeItem( 'evbr_auth' );
 		this.setState( {
 			token: null,
 			userId: null,
