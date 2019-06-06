@@ -78,7 +78,7 @@ export default class AuthPage extends Component {
 				return res.json();
 			} )
 			.then( resData => {
-				if ( resData.data.login.token ) {
+				if ( resData.data.login ) {
 					localStorage.setItem( 'evbr_auth', JSON.stringify( {
 						token: resData.data.login.token,
 						tokenExpiration: resData.data.login.tokenExpiration,
